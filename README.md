@@ -1,5 +1,5 @@
 # esbuild-fivem
-FiveM resource bootstrapped with esbuild and TypeScript.
+FiveM resource bootstrapped with esbuild and TypeScript. <br>
 Using this template should be very straightforward, but I will explain it anyways. <br>
 # Structure
 `common/`: Shared libraries, can be imported from both server and client (be aware of what natives/functions you use though). <br>
