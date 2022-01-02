@@ -7,4 +7,4 @@ Using this templat should be very straightforward, but I will explain it anyways
 `client/`: Client code.
 # Commands
 `build`: Will build the project  (production ready). <br>
-`dev`: Will start esbuild in watch mode (types are still checked). <br>
+`dev`: Will start esbuild in watch mode (types are still checked) (make sure to restart the resource in txAdmin/console). <br>
