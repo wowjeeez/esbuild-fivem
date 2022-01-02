@@ -10,7 +10,7 @@
     "target": "es6",
     "allowJs": false,
     "lib": ["es2015", "DOM"],
-    "types": ["@types/node"],
+    "types": ["@types/node", "@citizenfx/server", "@citizenfx/client"],
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
