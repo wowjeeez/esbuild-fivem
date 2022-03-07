@@ -9,7 +9,7 @@ async function build() {
         target: ["chrome58"],
         minify: true,
         format: "iife",
-    }).then(() => console.log(chalk.green("[server]: Built successfully!"))).catch(() => process.exit(1))
+    }).then(() => console.log(chalk.green("[client]: Built successfully!"))).catch(() => process.exit(1))
 
     require('esbuild').build({
         entryPoints: ['server/server.ts'],
@@ -18,7 +18,7 @@ async function build() {
         format: "cjs",
         minify: true,
         platform: "node",
-    }).then(() => console.log(chalk.green("[client]: Built successfully!"))).catch(() => process.exit(1))
+    }).then(() => console.log(chalk.green("[server]: Built successfully!"))).catch(() => process.exit(1))
 }
 
 build()
