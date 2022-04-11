@@ -4,6 +4,6 @@ game 'gta5'
 
 name 'your-awesome-project'
 
-client_script 'dist/client/client.js'
+client_script 'dist/client.js'
 
-server_script 'dist/server/server.js'
+server_script 'dist/server.js'
