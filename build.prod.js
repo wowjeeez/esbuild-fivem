@@ -7,7 +7,7 @@ async function build() {
         bundle: true,
         outfile: 'dist/client.js',
         target: ["chrome58"],
-        minify: true,
+        minify: false,
         format: "iife",
     }).then(() => console.log(chalk.green("[client]: Built successfully!"))).catch(() => process.exit(1))
 
@@ -16,7 +16,7 @@ async function build() {
         bundle: true,
         outfile: 'dist/server.js',
         format: "cjs",
-        minify: true,
+        minify: false,
         platform: "node",
     }).then(() => console.log(chalk.green("[server]: Built successfully!"))).catch(() => process.exit(1))
 }
