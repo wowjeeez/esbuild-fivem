@@ -16,7 +16,8 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "noEmit": true
+    "noEmit": true,
+    "skipLibCheck": true
   },
   "include": ["./**/*", "../common/**/*"],
   "exclude": ["**/node_modules"]
