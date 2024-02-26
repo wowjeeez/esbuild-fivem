@@ -2,12 +2,26 @@ const fs = require('fs');
 const path = require('path');
 const { build } = require('esbuild');
 
+function getAllFiles(folder) {
+    let result = [];
+    const files = fs.readdirSync(folder);
+
+    for (const file of files) {
+        const filePath = path.join(folder, file);
+        const stats = fs.statSync(filePath);
+        if (stats.isDirectory()) {
+            result = result.concat(getAllFiles(filePath));
+        } else if (file.endsWith('.ts')) {
+            result.push(filePath);
+        }
+    }
+
+    return result;
+}
+
 async function buildFolder(folder, outdir, target, format, platform) {
     try {
-        const files = fs
-            .readdirSync(folder)
-            .filter((file) => file.endsWith('.ts'));
-        const entryPoints = files.map((file) => path.join(folder, file));
+        const entryPoints = getAllFiles(folder);
 
         await build({
             entryPoints,

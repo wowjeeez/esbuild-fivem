@@ -1,19 +1,28 @@
 const chokidar = require('chokidar');
 const { build } = require('esbuild');
 const path = require('path');
+const fs = require('fs');
+
+function getAllFiles(folder) {
+    let result = [];
+    const files = fs.readdirSync(folder);
+
+    for (const file of files) {
+        const filePath = path.join(folder, file);
+        const stats = fs.statSync(filePath);
+        if (stats.isDirectory()) {
+            result = result.concat(getAllFiles(filePath));
+        } else if (file.endsWith('.ts')) {
+            result.push(filePath);
+        }
+    }
+
+    return result;
+}
 
 async function buildFolder(folder, outdir, target, format, platform) {
-    const chalk = (await import('chalk')).default;
-    console.log(chalk.yellow(`[${folder}]: Building...`));
-
     try {
-        const files = require('fs')
-            .readdirSync(folder)
-            .filter((file) => file.endsWith('.ts'));
-
-        const entryPoints = files.map((file) =>
-            require('path').join(folder, file),
-        );
+        const entryPoints = getAllFiles(folder);
 
         await build({
             entryPoints,
@@ -25,10 +34,15 @@ async function buildFolder(folder, outdir, target, format, platform) {
             minify: false,
         });
 
-        console.log(chalk.green(`[${folder}]: Built successfully!`));
+        const folderName = folder.includes('server') ? 'server' : 'client';
+        console.log(
+            (await import('chalk')).default.green(
+                `[${folderName}]: Built successfully!`,
+            ),
+        );
     } catch (error) {
-        console.log(chalk.red(`[${folder}]: Build failed!`));
         console.error(error);
+        process.exit(1);
     }
 }
 
