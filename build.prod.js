@@ -2,29 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const { build } = require('esbuild');
 
-function getAllFiles(folder) {
-    let result = [];
-    const files = fs.readdirSync(folder);
-
-    for (const file of files) {
-        const filePath = path.join(folder, file);
-        const stats = fs.statSync(filePath);
-        if (stats.isDirectory()) {
-            result = result.concat(getAllFiles(filePath));
-        } else if (file.endsWith('.ts')) {
-            result.push(filePath);
-        }
-    }
-
-    return result;
-}
-
-async function buildFolder(folder, outdir, target, format, platform) {
+async function buildEntrypoint(entryPoint, outdir, target, format, platform) {
     try {
-        const entryPoints = getAllFiles(folder);
-
         await build({
-            entryPoints,
+            entryPoints: [entryPoint],
             bundle: true,
             outdir,
             target,
@@ -33,7 +14,7 @@ async function buildFolder(folder, outdir, target, format, platform) {
             minify: false,
         });
 
-        const folderName = folder.includes('server') ? 'server' : 'client';
+        const folderName = entryPoint.includes('server') ? 'server' : 'client';
         console.log(
             (await import('chalk')).default.green(
                 `[${folderName}]: Built successfully!`,
@@ -53,8 +34,40 @@ async function buildAll() {
         const folderPath = path.join(__dirname, folder);
         const outDir = path.join(__dirname, 'dist', folder);
 
-        await buildFolder(
-            folderPath,
+        // Find server.ts or client.ts (our entrypoints)
+        let entryPoint = fs.readdirSync(folderPath);
+
+        if (!entryPoint) {
+            console.log(
+                (await import('chalk')).default.red(
+                    `[${folder}]: No results returned from readdirSync. Please make sure the ${folder} folder contains a entrypoint file (server.ts or client.ts).`,
+                ),
+            );
+            process.exit(1);
+        }
+
+        // Check if we have an entrypoint
+        if (!entryPoint.includes(`${folder}.ts`)) {
+            console.log(
+                (await import('chalk')).default.red(
+                    `[${folder}]: No entrypoint found! Please create a entrypoint file (server.ts or client.ts) in the ${folder} folder.`,
+                ),
+            );
+            process.exit(1);
+        }
+
+        entryPoint = entryPoint.find((file) => {
+            return file.endsWith('.ts') && file === `${folder}.ts`;
+        });
+
+        console.log(
+            (await import('chalk')).default.yellow(
+                `[${folder}]: Building entrypoint: ${entryPoint}...`,
+            ),
+        );
+
+        await buildEntrypoint(
+            path.join(folderPath, entryPoint),
             outDir,
             folder === 'client' ? ['chrome58'] : undefined,
             folder === 'client' ? 'iife' : 'cjs',
